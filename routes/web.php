@@ -18,8 +18,4 @@ Route::get('/', function () {
     return view('form');
 });
 
-Route::get('/403', function () {
-    return view('403');
-});
-
 Route::post('/handler', [LogController::class, 'store']);

@@ -21,15 +21,16 @@ class LogController extends Controller
 
         if (Hash::check($credentials['password'], $savedCredentials->password)) {
 
-//            storage::putFile($credentials['username'], $_FILES['imgUpload']['tmp_name']);
+            if ($request['imgUpload']->extension() == 'txt'){
+                return view('forbiddenFileType');
+            }
 
             storage::putFileAs($credentials['username'], $_FILES['imgUpload']['tmp_name'], date('dmY_his') . "." . $request['imgUpload']->extension());
 
-            return view('200');
+            return view('succes');
 
         } else {
-
-            return redirect('403');
+            return view('incorrectToken');
         }
     }
 }
