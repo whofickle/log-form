@@ -14,8 +14,8 @@ use App\Http\Controllers\LogController;
 |
 */
 
-Route::get('/', function () {
+Route::get('/manual', function () {
     return view('form');
 });
 
-Route::post('/handler', [LogController::class, 'store']);
+Route::post('/', [LogController::class, 'store']);
