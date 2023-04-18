@@ -37,9 +37,9 @@ class LogController extends Controller
 
             // declare forbidden file types
             $forbiddenFiles = [
-                'pdf',
-                'exe',
-                'sh'
+                'example1',
+                'example2',
+                'example3'
             ];
 
             // check if file type is not of a forbidden file type
