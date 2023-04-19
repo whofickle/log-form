@@ -21,21 +21,21 @@ class LogController extends Controller
             ];
 
         } else {
-            return response('No or too little credentials provided', 401);
+            return response('No or not enough credentials provided', 400);
         }
 
         // fetch saved credentials from DB
         $savedCredentials = DB::table('users')->where('username', $credentials['username'])->first();
 
-        // Check if user exists
+        // check if user exists
         if ($savedCredentials == null){
-           return response('User "' . $credentials['username'] . '" does not exist', 401);
+           return response('User "' . $credentials['username'] . '" does not exist', 404);
         }
 
         // check if password matches the hashed one from DB
         if (Hash::check($credentials['password'], $savedCredentials->password)) {
 
-            // declare forbidden file types
+            // declare forbidden file extensions
             $forbiddenFiles = [
                 'example1',
                 'example2',
@@ -46,18 +46,23 @@ class LogController extends Controller
             // case-insensitive so 'pdf', 'PDF' and 'PdF' are the same
             foreach ($forbiddenFiles as $forbiddenFile) {
                 if (strtolower($request['file']->extension()) == strtolower($forbiddenFile)) {
-                    return response('Forbidden file type', 403);
+                    return response('Forbidden file type: ' . $request['file']->extension(), 415);
                 }
             }
 
-            // save file to storage in: 'app/[username]/[date_time].[original-extension]'
-            storage::putFileAs($credentials['username'], $_FILES['file']['tmp_name'], date('dmY_his') . "." . $request['file']->extension());
+            // check if a file was uploaded
+            if (isset($_FILES['file'])) {
+                // save file to storage in: 'app/[username]/[date_time].[original-extension]'
+                storage::putFileAs($credentials['username'], $_FILES['file']['tmp_name'], date('dmY_his') . "." . $request['file']->extension());
+            } else {
+                return response('No file provided', 400);
+            }
 
-            // respond succes
+            // respond with status 200
             return response('Succes', 200);
 
         } else {
-            return response('<h1>Forbidden</h1> Invalid credentials', 401);
+            return response('Invalid credentials', 401);
         }
     }
 }
