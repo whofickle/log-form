@@ -42,18 +42,20 @@ class LogController extends Controller
                 'example3'
             ];
 
-            // check if file type is not of a forbidden file type
-            // case-insensitive so 'pdf', 'PDF' and 'PdF' are the same
-            foreach ($forbiddenFiles as $forbiddenFile) {
-                if (strtolower($request['file']->extension()) == strtolower($forbiddenFile)) {
-                    return response('Forbidden file type: ' . $request['file']->extension(), 415);
-                }
-            }
-
             // check if a file was uploaded
-            if (isset($_FILES['file'])) {
+            if ($_FILES['file'] == null) {
+
+                // check if file type is not of a forbidden file type
+                // case-insensitive so 'pdf', 'PDF' and 'PdF' are the same
+                foreach ($forbiddenFiles as $forbiddenFile) {
+                    if (strtolower($request['file']->extension()) == strtolower($forbiddenFile)) {
+                        return response('Forbidden file type: ' . $request['file']->extension(), 415);
+                    }
+                }
+
                 // save file to storage in: 'app/[username]/[date_time].[original-extension]'
                 storage::putFileAs($credentials['username'], $_FILES['file']['tmp_name'], date('dmY_his') . "." . $request['file']->extension());
+
             } else {
                 return response('No file provided', 400);
             }
