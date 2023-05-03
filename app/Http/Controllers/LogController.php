@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use App\Models\User;
+use App\Models\Log;
 
 class LogController extends Controller
 {
@@ -13,7 +15,7 @@ class LogController extends Controller
     public function store(Request $request){
 
         // Check if all credentials are provided
-        if (!empty($request->all(0)['username']) || !empty($request->all(0)['password'])) {
+        if (!empty($request->all(0)['username']) && !empty($request->all(0)['password'])) {
 
             $credentials = [
                 'username' => $request->all(0)['username'],
@@ -25,15 +27,15 @@ class LogController extends Controller
         }
 
         // fetch saved credentials from DB
-        $savedCredentials = DB::table('users')->where('username', $credentials['username'])->first();
+        $user = User::where('username', $credentials['username'])->first();
 
         // check if user exists
-        if ($savedCredentials == null){
+        if ($user == null){
            return response('User "' . $credentials['username'] . '" does not exist', 404);
         }
 
         // check if password matches the hashed one from DB
-        if (Hash::check($credentials['password'], $savedCredentials->password)) {
+        if (Hash::check($credentials['password'], $user->password)) {
 
             // declare forbidden file extensions
             $forbiddenFiles = [
@@ -43,18 +45,31 @@ class LogController extends Controller
             ];
 
             // check if a file was uploaded
-            if ($_FILES['file'] == null) {
+            if ($_FILES['file'] != null) {
 
                 // check if file type is not of a forbidden file type
                 // case-insensitive so 'pdf', 'PDF' and 'PdF' are the same
                 foreach ($forbiddenFiles as $forbiddenFile) {
                     if (strtolower($request['file']->extension()) == strtolower($forbiddenFile)) {
-                        return response('Forbidden file type: ' . $request['file']->extension(), 415);
+                        return response('Unsupported file type: ' . $request['file']->extension(), 415);
                     }
                 }
 
-                // save file to storage in: 'app/[username]/[date_time].[original-extension]'
-                storage::putFileAs($credentials['username'], $_FILES['file']['tmp_name'], date('dmY_his') . "." . $request['file']->extension());
+//                dd($_FILES);
+
+                // save file to storage in: 'app\[username]\[date_time].[original-extension]'
+                $newFileName = date('dmY_his') . "." . $request['file']->extension();
+                storage::putFileAs($credentials['username'], $_FILES['file']['tmp_name'], $newFileName);
+
+                $log = new Log;
+                $log->user_id = $user->user_id;
+                $log->name = $newFileName;
+                $log->file_path = 'storage\app\\'.$credentials['username'].'\\'.$newFileName;
+//                $log->file_path = storage_path().'\app\\'.$credentials['username'].'\\'.$newFileName;
+                $log->save();
+
+//                dd(Storage::url($newFileName));
+//                dd(storage_path());
 
             } else {
                 return response('No file provided', 400);

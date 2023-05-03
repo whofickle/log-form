@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LogController;
 
@@ -17,5 +18,11 @@ use App\Http\Controllers\LogController;
 Route::get('/manual', function () {
     return view('form');
 });
+
+Route::get('/register', function () {
+    return view('registerUser');
+});
+
+Route::get('/user/{id}', [UserController::class, 'show']);
 
 Route::post('/', [LogController::class, 'store']);
