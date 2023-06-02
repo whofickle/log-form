@@ -23,6 +23,8 @@ Route::get('/register', function () {
     return view('registerUser');
 });
 
-Route::get('/user/{id}', [UserController::class, 'show']);
+Route::get('/user/{id}', [UserController::class, 'userView']);
 
 Route::post('/', [LogController::class, 'store']);
+
+Route::get('/log/{id}', [LogController::class, 'read']);

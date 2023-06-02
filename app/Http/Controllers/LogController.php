@@ -55,8 +55,6 @@ class LogController extends Controller
                     }
                 }
 
-//                dd($_FILES);
-
                 // save file to storage in: 'app\[username]\[date_time].[original-extension]'
                 $newFileName = date('dmY_his') . "." . $request['file']->extension();
                 storage::putFileAs($credentials['username'], $_FILES['file']['tmp_name'], $newFileName);
@@ -65,11 +63,7 @@ class LogController extends Controller
                 $log->user_id = $user->user_id;
                 $log->name = $newFileName;
                 $log->file_path = 'storage\app\\'.$credentials['username'].'\\'.$newFileName;
-//                $log->file_path = storage_path().'\app\\'.$credentials['username'].'\\'.$newFileName;
                 $log->save();
-
-//                dd(Storage::url($newFileName));
-//                dd(storage_path());
 
             } else {
                 return response('No file provided', 400);
@@ -81,5 +75,14 @@ class LogController extends Controller
         } else {
             return response('Invalid credentials', 401);
         }
+    }
+    // read requested file
+    public function read($id){
+        $file = Log::all()->where('log_id', '=', $id)->first();
+        $uid = $file->user_id;
+        $user = User::all()->where('user_id', '=', $uid)->first();
+
+        echo file_get_contents(base_path($file->file_path));
+
     }
 }
