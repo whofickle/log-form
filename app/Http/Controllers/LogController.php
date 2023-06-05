@@ -12,7 +12,7 @@ use App\Models\Log;
 class LogController extends Controller
 {
 //    Saves the file given via POST.
-    public function store(Request $request){
+    public function storeLog(Request $request){
 
         // Check if all credentials are provided
         if (!empty($request->all(0)['username']) && !empty($request->all(0)['password'])) {
@@ -27,7 +27,7 @@ class LogController extends Controller
         }
 
         // fetch saved credentials from DB
-        $user = User::where('username', $credentials['username'])->first();
+        $user = User::firstWhere('username', $credentials['username']);
 
         // check if user exists
         if ($user == null){
@@ -76,11 +76,21 @@ class LogController extends Controller
             return response('Invalid credentials', 401);
         }
     }
+
+    // get all files
+    public function getLogs(){
+        $logs   = Log::all();
+
+        return view('log/getLogs', [
+            'logs'  => $logs,
+        ]);
+    }
+
     // read requested file
-    public function read($id){
-        $file = Log::all()->where('log_id', '=', $id)->first();
+    public function getLog($id){
+        $file = Log::all()->firstWhere('log_id', '=', $id);
         $uid = $file->user_id;
-        $user = User::all()->where('user_id', '=', $uid)->first();
+        $user = User::all()->firstWhere('user_id', '=', $uid);
 
         echo file_get_contents(base_path($file->file_path));
 

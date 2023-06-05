@@ -15,6 +15,10 @@ use App\Http\Controllers\LogController;
 |
 */
 
+Route::get('/', function () {
+    return view('index');
+});
+
 Route::get('/manual', function () {
     return view('form');
 });
@@ -22,9 +26,10 @@ Route::get('/manual', function () {
 Route::get('/register', function () {
     return view('registerUser');
 });
+Route::get('/users', [UserController::class, 'getUsers']);
+Route::get('/users/{id}', [UserController::class, 'getUserFiles']);
 
-Route::get('/user/{id}', [UserController::class, 'userView']);
+Route::post('/upload', [LogController::class, 'storeLog']);
 
-Route::post('/', [LogController::class, 'store']);
-
-Route::get('/log/{id}', [LogController::class, 'read']);
+Route::get('/logs', [LogController::class, 'getLogs']);
+Route::get('/logs/{id}', [LogController::class, 'getLog']);
