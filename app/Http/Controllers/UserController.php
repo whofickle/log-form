@@ -10,11 +10,9 @@ class UserController extends Controller
 {
     public function getUsers(){
         $users = User::all();
-        $username = User::all()->firstWhere('user_id', '=', $id)->username;
 
         return view('user/getUsers', [
-            'users' => $users,
-            'username' => $username,
+            'users' => $users
         ]);
     }
 
