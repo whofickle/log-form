@@ -5,20 +5,26 @@
 @endsection
 
 @section('content')
-<form action="{{ url('/upload') }}" method="post" enctype="multipart/form-data">
-    <label for="file">File:</label>
-    <input type="file" id="file" name="file">
-    <br>
+<div class="container mt-5">
+    <form action="{{ url('/upload') }}" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="file">File:</label>
+            <input type="file" class="form-control" id="file" name="file">
+        </div>
 
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="username">
-    <br>
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" class="form-control" id="username" name="username">
+        </div>
 
-    <label for="password">Password:</label>
-    <input type="text" id="password" name="password">
-    <br>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" class="form-control" id="password" name="password">
+        </div>
 
-    <input type="hidden" name="manual" value='true'>
-    <input type="submit">
-</form>
+        <input type="hidden" name="manual" value="true">
+
+        <button type="submit" class="btn btn-primary mt-3">Submit</button>
+    </form>
+</div>
 @endsection
