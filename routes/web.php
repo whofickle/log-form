@@ -29,6 +29,7 @@ Route::get('/register', function () {
 Route::get('/users', [UserController::class, 'getUsers']);
 Route::get('/users/{id}', [UserController::class, 'getUserFiles']);
 
+// http only, empty page if accessed normally
 Route::post('/upload', [LogController::class, 'storeLog']);
 
 Route::get('/logs', [LogController::class, 'getLogs']);
