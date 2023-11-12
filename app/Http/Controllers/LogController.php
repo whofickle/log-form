@@ -23,7 +23,7 @@ class LogController extends Controller
             ];
 
         } else {
-            return response('No or not enough credentials provided', 400);
+            return response('No or not enough credentials provided', 401);
         }
 
         // fetch saved credentials from DB
@@ -31,7 +31,7 @@ class LogController extends Controller
 
         // check if user exists
         if ($user == null){
-           return response('User "' . $credentials['username'] . '" does not exist', 404);
+           return response('User "' . $credentials['username'] . '" does not exist', 401);
         }
 
         // check if password matches the hashed one from DB
